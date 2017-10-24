@@ -1,0 +1,15 @@
+{
+  "default":{
+    "foo":"default-foo",
+    "bar": "{foo}-bar",
+    "baz": "baz",
+    "bad_replace": "react-event-processor/src/resources/{}",
+    "AWS_ACCESS_KEY_ID":"key",
+    "AWS_SECRET_ACCESS_KEY":"secret-key",
+    "my-bool":true,
+    "my-number":3
+  },
+  "unit_test":{
+    "baz":"unit-test-baz"
+  }
+}

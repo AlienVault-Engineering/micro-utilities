@@ -1,0 +1,14 @@
+language: python
+python:
+- '2.7'
+install:
+- pip install pybuilder
+- gem install travis -v 1.8.8 --no-rdoc --no-ri
+script: pyb install_dependencies package   -P build_number=0.1.${TRAVIS_BUILD_NUMBER}
+deploy:
+  provider: pypi
+  user: alienvault_engineering
+  distributions: sdist
+  server: https://upload.pypi.org/legacy/
+  password:
+    secure: Yz/zox0u7g2h3/65nxEVQ1gJft0XXHsx1G7rkSyEh5yoSimsbvXH7qnVS53Hx4Dmse2if3SYpiaaEmEGEbZOKHrpcQsA2VAR8j3kfLgGKVy3h+MbcmvEvBvUbO5ai5hq9pl3PACc5tP71/8FSfulpVuUZv+NdJQXpP7eK8xCEnEsjirHS/tqhDqb27WH+9mFROmxjyV58OVTVtv23WHV9Pq5h3iRiQsLq701a5sXmWa8tQSjWzjHGhTMQOorEhuPhIpHJUs6wzCWId7tRg84WU6IVx707O0LUdpIb9/tQj6575jQtri83ykldYwo+EmTOSzQSS8qSTK27MYcMgc8conQHl7c5oyk13sTS0NKnwmQAyYWO/Etvx9jK/s03HPZRyM3t/HEH+jgvMt48YxsM/7BliEXfU1BKpyWQgSRta8cjSpTP8gbu2AMj0LDk/7L3Y/3uiDEslBO/Q2B+0rzKYJqWzf0U1K9rdfA1b5CzCj4rl9zhrcIQovM93ix8voWhugVX47lz3IlvQk0pKp18uy26Yg70EBJKx2PUSvs0tjFn1WPImgRT97rKOanVEL1jmeuKHsqwRPjm5jxNl8nIQ0i+KMjb1e0eo91zs9qCURC4LiBrTWprGJ/4SfeVgvozJmpBQzw/APi4KzG5ZuGUZry5ald9fGd7N9Ge+edPSM=
