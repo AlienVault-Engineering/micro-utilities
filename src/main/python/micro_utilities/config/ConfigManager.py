@@ -16,23 +16,30 @@ os.environ.setdefault('ENVIRONMENT','unit-test')
 def _load_config():
     global config
     if not config:
-        config_file_list = [os.environ.get(BASE_CONFIG_FILE,"{0}/config.json".format(os.path.dirname(__file__))),
-                            os.environ.get(CONFIG_FILE, "config.json")]
-        config = {}
-        for config_file in config_file_list:
-            if os.path.exists(config_file):
-                load_config_file(config, config_file)
-        expanded = {}
-        for key, value in config.iteritems():
-            if key in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]:
-                os.environ[key] = value
-            if isinstance(value, basestring) and "{" in value and "}" in value and "{}" not in value:
-                try:
-                    expanded[key] = value.format(**config)
-                except IndexError:
-                    logging.error("Error expanding value {} - {}".format(value,str(config)))
-        config.update(expanded)
+        reload_config()
     return config
+
+
+def reload_config(additional_config_files=None):
+    global config
+    config_file_list = [os.environ.get(BASE_CONFIG_FILE, "{0}/config.json".format(os.path.dirname(__file__))),
+                        os.environ.get(CONFIG_FILE, "config.json")]
+    if additional_config_files:
+        config_file_list.append(additional_config_files)
+    config = {}
+    for config_file in config_file_list:
+        if os.path.exists(config_file):
+            load_config_file(config, config_file)
+    expanded = {}
+    for key, value in config.iteritems():
+        if key in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]:
+            os.environ[key] = value
+        if isinstance(value, basestring) and "{" in value and "}" in value and "{}" not in value:
+            try:
+                expanded[key] = value.format(**config)
+            except IndexError:
+                logging.error("Error expanding value {} - {}".format(value, str(config)))
+    config.update(expanded)
 
 
 def load_config_file(config_target, config_file):
