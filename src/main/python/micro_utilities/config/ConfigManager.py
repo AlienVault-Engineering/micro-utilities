@@ -25,7 +25,7 @@ def reload_config(additional_config_files=None):
     config_file_list = [os.environ.get(BASE_CONFIG_FILE, "{0}/config.json".format(os.path.dirname(__file__))),
                         os.environ.get(CONFIG_FILE, "config.json")]
     if additional_config_files:
-        config_file_list.append(additional_config_files)
+        config_file_list.extend(additional_config_files)
     config = {}
     for config_file in config_file_list:
         if os.path.exists(config_file):
