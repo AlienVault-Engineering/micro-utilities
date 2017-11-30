@@ -121,3 +121,7 @@ def init_logger(root):
 
 def get_config():
     return _load_config()
+
+
+def render_string(template):
+    return template.format(**_load_config())

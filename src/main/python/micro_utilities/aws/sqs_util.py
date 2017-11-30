@@ -11,7 +11,6 @@ def _init_queue(queue_name):
     conn = sqs.connect_to_region(region_name=ConfigManager.get_value_default("region", "us-west-2"))
     queue = conn.create_queue(queue_name)
     queue.set_message_class(JSONMessage)
-
     return conn, queue
 
 
@@ -32,5 +31,24 @@ def monitor_queue(queue_name_config_key, processing_function_pointer):
                     count += 1
                 except Exception as e:
                     logging.error("Error peristing message %s", e.message)
-            if len(to_delete) >0:
+            if len(to_delete) > 0:
                 conn.delete_message_batch(queue=queue, messages=to_delete)
+
+
+class SQSQueue(object):
+    def _init_queue(self, queue_name):
+        conn = sqs.connect_to_region(region_name=ConfigManager.get_value_default("region", "us-west-2"))
+        return conn.create_queue(queue_name)
+
+    def __init__(self, queue_name):
+        super(SQSQueue, self).__init__()
+        self.queue_name = queue_name
+        self.queue = None
+
+    def write_event(self, event_content):
+        self._get_queue().write(JSONMessage(body=event_content))
+
+    def _get_queue(self):
+        if not self.queue:
+            self.queue = self._init_queue(self.queue_name)
+        return self.queue
