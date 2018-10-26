@@ -7,16 +7,22 @@ from boto.sqs.jsonmessage import JSONMessage
 from micro_utilities.config import ConfigManager
 
 
-def _init_queue(queue_name):
+def _init_queue(queue_name,force_create=True):
     conn = sqs.connect_to_region(region_name=ConfigManager.get_value_default("region", "us-west-2"))
-    queue = conn.create_queue(queue_name)
+    if force_create:
+        queue = conn.create_queue(queue_name)
+    else:
+        queue = conn.get_queue(queue_name)
+        if not queue:
+            logging.info("Can not find queue %s", queue.name)
+            raise  Exception("Can not find queue %s".format(queue.name))
     queue.set_message_class(JSONMessage)
     return conn, queue
 
 
-def monitor_queue(queue_name_config_key, processing_function_pointer):
+def monitor_queue(queue_name_config_key, processing_function_pointer,force_create=True):
     # type: (str, FunctionType) -> None
-    conn, queue = _init_queue(ConfigManager.get_value(queue_name_config_key))
+    conn, queue = _init_queue(ConfigManager.get_value(queue_name_config_key),force_create)
     logging.info("Listening to queue %s", queue.name)
     while True:
         result_set = conn.receive_message(queue, number_messages=10, wait_time_seconds=20)
